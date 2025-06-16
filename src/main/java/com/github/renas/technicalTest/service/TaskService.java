@@ -1,12 +1,14 @@
 package com.github.renas.technicalTest.service;
 
-import com.github.renas.technicalTest.ResourceNotFoundException;
-import com.github.renas.technicalTest.Task;
-import com.github.renas.technicalTest.TaskStatus;
+import com.github.renas.technicalTest.controller.ResourceNotFoundException;
+import com.github.renas.technicalTest.controller.Task;
+import com.github.renas.technicalTest.controller.TaskStatus;
 import com.github.renas.technicalTest.controller.TaskRequest;
 import com.github.renas.technicalTest.persistance.TaskRepo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 import java.util.UUID;
 
 
@@ -25,16 +27,22 @@ public class TaskService {
         return taskRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Task with ID " + id + " not found"));
     }
 
+    public List<Task> getAll() {
+        return taskRepo.findAll();
+    }
+
     @Transactional
     public Task create(TaskRequest task) {
-        Task taskDao = new Task();
+        Task createdTask = new Task();
 
-        taskDao.setUuid(UUID.randomUUID());
-        taskDao.setDescription(task.description());
-        taskDao.setDueDate(task.dueDate());
-        taskDao.setStatus(TaskStatus.INCOMPLETE);
+        createdTask.setUuid(UUID.randomUUID());
+        createdTask.setTitle(task.name());
+        createdTask.setDescription(task.description());
+        createdTask.setDueDate(task.dueDate());
+        createdTask.setStatus(TaskStatus.INCOMPLETE);
 
-        return taskRepo.save(taskDao);
+        return taskRepo.save(createdTask);
+
     }
 
     public void delete(UUID id) {

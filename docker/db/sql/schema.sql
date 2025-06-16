@@ -1,5 +1,5 @@
-CREATE DATABASE IF NOT EXISTS `mind_map`
-USE `mind_map`;
+CREATE DATABASE IF NOT EXISTS `test`;
+USE `test`;
 
 CREATE TABLE IF NOT EXISTS `task`
 (
@@ -7,5 +7,5 @@ CREATE TABLE IF NOT EXISTS `task`
     `title` VARCHAR(255) NOT NULL,
     `description` VARCHAR(1000),
     `due_date` DATE NOT NULL,
-    `task_status`    ENUM ('COMPLETE', 'INCOMPLETE'),
+    `task_status`    ENUM ('COMPLETE', 'INCOMPLETE')
     );

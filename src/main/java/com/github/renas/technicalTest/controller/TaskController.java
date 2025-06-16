@@ -1,18 +1,16 @@
 package com.github.renas.technicalTest.controller;
 
 
-import com.github.renas.technicalTest.Task;
-import com.github.renas.technicalTest.TaskStatus;
-import com.github.renas.technicalTest.TaskStatusRequest;
 import com.github.renas.technicalTest.service.TaskService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
-@CrossOrigin(origins = "https://localhost:8080")
+@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping(value = "/task", produces = MediaType.APPLICATION_JSON_VALUE)
 public class TaskController {
     private final TaskService taskService;
@@ -26,6 +24,10 @@ public class TaskController {
         return ResponseEntity.ok(taskService.getById(id));
     }
 
+    @GetMapping("/all")
+    public ResponseEntity<List<Task>> getAllTasks() {
+        return ResponseEntity.ok(taskService.getAll());
+    }
     @PostMapping("/create")
     public ResponseEntity<Task> createTask(@RequestBody TaskRequest task) {
         return ResponseEntity.ok(taskService.create(task));
@@ -43,7 +45,7 @@ public class TaskController {
     }
 
     @PostMapping("/change-status/{id}")
-    public ResponseEntity<TaskStatus> changeStatus(@PathVariable UUID id, @RequestBody TaskStatusRequest request) {
+    public ResponseEntity<Task> changeStatus(@PathVariable UUID id, @RequestBody TaskStatusRequest request) {
         return ResponseEntity.ok(taskService.changeStatus(id, request.newStatus()));
     }
 

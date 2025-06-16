@@ -1,10 +1,10 @@
-package com.github.renas.technicalTest;
+package com.github.renas.technicalTest.controller;
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.sql.Date;
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -12,9 +12,8 @@ import java.util.UUID;
 public class Task {
 
     @Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    @Column(name = "uuid", columnDefinition = "CHAR(36)")
+    @Column(name = "uuid", columnDefinition = "CHAR(36)", nullable = false, unique = true, length = 36)
+    @JdbcTypeCode(SqlTypes.CHAR)
     private UUID uuid;
 
     @Column(name = "title", columnDefinition = "VARCHAR(255)")
@@ -24,7 +23,7 @@ public class Task {
     private String description;
 
     @Column(name = "due_date")
-    private LocalDateTime dueDate;
+    private Date dueDate;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "task_status")
@@ -54,7 +53,7 @@ public class Task {
         this.description = description;
     }
 
-    public LocalDateTime getDueDate() {
+    public Date getDueDate() {
         return dueDate;
     }
 

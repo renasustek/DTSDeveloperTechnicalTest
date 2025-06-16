@@ -1,4 +1,4 @@
-package com.github.renas.technicalTest;
+package com.github.renas.technicalTest.controller;
 
 public class ResourceNotFoundException extends RuntimeException {
 
