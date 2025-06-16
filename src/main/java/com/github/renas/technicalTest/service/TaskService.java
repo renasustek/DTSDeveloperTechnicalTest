@@ -7,9 +7,6 @@ import com.github.renas.technicalTest.controller.TaskRequest;
 import com.github.renas.technicalTest.persistance.TaskRepo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.sql.Date;
-import java.time.LocalDate;
 import java.util.UUID;
 
 
@@ -51,51 +48,24 @@ public class TaskService {
         if (!taskRepo.existsById((task.getUuid()))) {
             throw new ResourceNotFoundException("Task with ID " + task.getUuid() + " not found");
         }
-        return taskRepo.save(task);
-        return saveAndConvertTaskDaoToTask(task, taskDao, task.getUuid());
+        Task updatedTask = new Task();
+        updatedTask.setUuid(task.getUuid());
+        updatedTask.setDescription(task.getDescription());
+        updatedTask.setStatus(task.getStatus());
+        updatedTask.setTitle(task.getTitle());
+
+        return taskRepo.save(updatedTask);
     }
 
-    private Task saveAndConvertTaskDaoToTask(Task task, TaskDao taskDao, UUID id) {
-        taskDao.setUuid(id);
-        taskDao.setUserId(getLoggedInUserId());
-        taskDao.setName(task.name());
-        taskDao.setDescription(task.description());
-        taskDao.setEisenhower(task.eisenhowerMatrix());
-        taskDao.setLabelId(task.labelId());
-        taskDao.setCreatedDate(task.createdDate());
-        taskDao.setDueDate(task.dueDate());
-        taskDao.setCompletedDate(task.completedDate());
-        taskDao.setTaskStatus(task.taskStatus());
-        TaskDao createdTask = taskRepo.save(taskDao);
-        return new Task(
-                createdTask.getUuid(),
-                createdTask.getName(),
-                createdTask.getDescription(),
-                createdTask.getEisenhower(),
-                createdTask.getLabelId(),
-                createdTask.getCreatedDate(),
-                createdTask.getDueDate(),
-                createdTask.getCompletedDate(),
-                createdTask.getTaskStatus()
 
-        );
-    }
+    public Task changeStatus(UUID id, TaskStatus newStatus) {
 
-    public TaskStatus changeStatus(UUID id, TaskStatus newStatus) {
-
-        TaskDao taskDao = taskRepo.findTaskByIdForCurrentUser(id)
+        Task task = taskRepo.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Task with ID " + id + " not found"));
 
-        taskDao.setTaskStatus(newStatus);
+        task.setStatus(newStatus);
 
-        if (newStatus == TaskStatus.DONE) {
-            taskDao.setCompletedDate(Date.valueOf(LocalDate.now()));
-            xpService.addXP(Rewards.TASK_COMPLETED);
-        } else {
-            taskDao.setCompletedDate(null);
-        }
-
-        return taskRepo.save(taskDao).getTaskStatus();
+        return taskRepo.save(task);
     }
 
 }
